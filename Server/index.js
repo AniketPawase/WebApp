@@ -10,9 +10,11 @@ app.use(cors()); // to parse the incoming requests with JSON payloads
 //ROUTERS
 const postRouter = require('./routes/Posts')
 const commentsRouter = require('./routes/Comments')
+const usersRouter = require('./routes/Users')
 
 app.use("/posts",postRouter)
 app.use("/comments",commentsRouter)
+app.use("/auth",usersRouter)
 
 
 //MIDDLEWARES
