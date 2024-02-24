@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext} from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../helpers/authContext";
 
 function Login() {
     const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoggingIn, setIsLoggingIn] = useState(false); // State to track login status
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const {setAuthState}  = useContext(AuthContext)
 
   const login = () => {
     if (isLoggingIn) return; // If login request is already in progress, do nothing
@@ -19,7 +21,8 @@ function Login() {
         if(response.data.error){
             alert(response.data.error)}
             else{
-                sessionStorage.setItem("accessToken",response.data)
+                localStorage.setItem("accessToken",response.data)
+                setAuthState(true)
                 navigate('/')
             }
       })
