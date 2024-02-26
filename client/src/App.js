@@ -11,7 +11,9 @@ import axios from 'axios';
 
 function App() {
 
-  const [authState,setAuthState] = useState(false);
+  const [authState,setAuthState] = useState({username:"",
+                                            id: 0,
+                                            status: false});
  
   useEffect(()=>{
     // if(localStorage.getItem('accessToken')){
@@ -22,10 +24,22 @@ function App() {
       accessToken : localStorage.getItem("accessToken"),
     } })
     .then((response)=>{
-      if(response.data.error){setAuthState(false)}
-      else{setAuthState(true);}
+      if(response.data.error){setAuthState({...authState,status: false})}
+      
+      else{setAuthState({
+          username: response.data.username,
+          id: response.data.id,
+          status:true
+      })};
     })
-  },[])
+  },[authState])
+
+  //Logout
+  const logout=()=>{
+    localStorage.removeItem("accessToken");
+    setAuthState({username:"",
+                  id: 0,
+                  status: false})}
 
   return (
     <div className="App">
@@ -36,12 +50,13 @@ function App() {
         <Link to={'/'} >Go to Home Page</Link>
         <Link to={'/createPost'} >Create a Post</Link>
         {
-          !authState && (
+          !authState.status ?  (
             <>
              <Link to={'/login'} >LOGIN</Link>
              <Link to={'/registration'} >Registration</Link>
             </>
-          )}
+          )  :  <button onClick={logout}>Logout</button>} 
+          <h5>{authState.username}</h5>
 
         </div>
         <Routes>

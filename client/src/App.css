@@ -121,6 +121,17 @@ span {
   color: white;
 }
 
+.navbar button{
+  width: 150px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.deleteButton :hover{
+  cursor: pointer;
+  background-color: crimson;
+}
+
 /* INDIVIDUAL POST */
 .postPage {
   display: flex;
