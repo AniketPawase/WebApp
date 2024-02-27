@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import axios from  'axios';
 import {Formik, Form, Field,ErrorMessage} from 'formik'
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
+import {AuthContext} from '../helpers/authContext'
 
 function CreatePost() {
     const navigate = useNavigate();
+    const {authState} = useContext(AuthContext);
 
     const initialValues={
         title:"",
@@ -51,7 +53,7 @@ function CreatePost() {
             <ErrorMessage name='username' component="span" />  
             <Field id="inputCreatePost" 
             name="username" 
-            placeholder="(Ex. JohnDoe" />
+            placeholder={authState.username}/>
 
             <button type='submit'>Create Post</button>
         </Form>

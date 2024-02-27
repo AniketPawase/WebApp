@@ -25,7 +25,7 @@ router.post("/login", async (req, res) => {
       res.status(404).json({ error: "User Doesn't Exist" }); // Return 404 status for user not found
       return; // Exit the function early
     }
-  
+   
     bcrypt.compare(password, user.password).then((match) => {
       if (!match) res.json({ error: "Wrong Username And Password Combination" });
     

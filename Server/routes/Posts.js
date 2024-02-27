@@ -1,12 +1,19 @@
 const express = require('express');
 const router = express.Router();
-const { Posts } = require("../models");
+const { Posts,Likes } = require("../models");
+const {validateToken} = require('../middlewares/AuthMIddleware')
+
 
 // 1. Get All Posts
-router.get("/", async (req, res) => {
+router.get("/",validateToken, async (req, res) => {
     try {
-        const listOfPosts = await Posts.findAll();
-        res.json(listOfPosts);
+        const listOfPosts = await Posts.findAll({
+            include : [Likes]
+        });
+        const likedPosts = await Likes.findAll({
+            where: {UserId:req.user.id}
+        });
+        res.json({listOfPosts : listOfPosts,likedPosts:likedPosts});
     } catch (error) {
         console.error("Error fetching all posts:", error);
         res.status(500).json({ error: "Internal server error" });
@@ -15,6 +22,7 @@ router.get("/", async (req, res) => {
 
 // 2. Create a new post
 router.post("/", async (req, res) => {
+   
     try {
         const post = req.body;
         await Posts.create(post);
