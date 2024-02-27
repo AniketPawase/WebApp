@@ -4,25 +4,34 @@ import {Formik, Form, Field,ErrorMessage} from 'formik'
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import {AuthContext} from '../helpers/authContext'
+import { useEffect } from 'react';
 
 function CreatePost() {
     const navigate = useNavigate();
     const {authState} = useContext(AuthContext);
 
+    useEffect(()=>{
+        if(! localStorage.getItem("accessToken")){
+            navigate('/login')
+        }
+    },[authState.status,navigate])
+
     const initialValues={
         title:"",
         postText:"",
-        username: ""
     };
 
     const validationSchema = Yup.object().shape({
         title:Yup.string().required(),
         postText: Yup.string().required() ,
-        username: Yup.string().min(3).max(20).required()
     })
 
     const onSubmit =(data)=>{
-        axios.post('http://localhost:3001/posts',data)
+        axios.post('http://localhost:3001/posts',data,{
+            headers:{
+                accessToken: localStorage.getItem("accessToken")
+            }
+        })
         .then((response)=>{
             console.log(response.data);
             navigate('/');
@@ -48,12 +57,6 @@ function CreatePost() {
             <Field id="inputCreatePost" 
             name="postText" 
             placeholder="(Ex. The info of post" />
-
-            <label>Username: </label>   
-            <ErrorMessage name='username' component="span" />  
-            <Field id="inputCreatePost" 
-            name="username" 
-            placeholder={authState.username}/>
 
             <button type='submit'>Create Post</button>
         </Form>

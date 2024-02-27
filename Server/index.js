@@ -19,6 +19,7 @@ app.use("/auth",usersRouter)
 app.use("/likes",likesRouter)
 
 
+
 //MIDDLEWARES
 db.sequelize.sync().then(()=>{
     app.listen(3001,()=>{

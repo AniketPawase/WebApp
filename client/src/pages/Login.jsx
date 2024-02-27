@@ -25,7 +25,7 @@ function Login() {
                 setAuthState({username: response.data.username,
                               id:response.data.id,
                               status:true})
-                navigate('/')
+                              navigate("/")
             }
       })
       .catch((error) => {

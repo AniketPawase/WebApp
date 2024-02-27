@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react'
-import {useParams} from 'react-router-dom'
+import {useParams,useNavigate} from 'react-router-dom'
 import {AuthContext} from '../helpers/authContext'
 
 function Post() {
@@ -9,6 +9,7 @@ function Post() {
     const [comments,setComments]= useState([]);
     const [newComment,setNewComment]=useState('');
     const {authState} = useContext(AuthContext)
+    const navigate = useNavigate();
 
     useEffect(()=>{
         axios.get(`http://localhost:3001/posts/${id}`).then((response)=>{
@@ -62,15 +63,76 @@ function Post() {
       })
     }
 
+    //Deleting a Post
+//Deleting a Post
+const deletePost = (id) => {
+  axios.delete(`http://localhost:3001/posts/${id}`, {
+    headers: {
+      accessToken: localStorage.getItem("accessToken"),
+    },
+  })
+  .then((response) => {
+    console.log(response.data); // Log the response to check if it's successful
+    console.log("Post Deleted");
+    navigate('/');
+  })
+  .catch((error) => {
+    console.error("Error deleting post:", error);
+    // Handle any error that might occur during deletion
+  });
+}
+
+
+  const editPost =(option)=>{
+    if(option === 'title'){
+      let newTitle = prompt('Enter new Title')
+      axios.put("http://localhost:3001/posts/title",
+      {newTitle: newTitle,
+         id: id},{
+        headers:{
+          accessToken: localStorage.getItem("accessToken")
+        }
+      });
+      setPostObj({...postObj,title: newTitle})
+    }else{
+      let newPostText = prompt('Enter new Text')
+      axios.put("http://localhost:3001/posts/postText",
+      {newText: newPostText,
+         id: id},{
+        headers:{
+          accessToken: localStorage.getItem("accessToken")
+        }
+      });
+      setPostObj({...postObj,postText:newPostText})
+    }
+  }
 
 
   return (
     <div className='postPage'>
      <div className='leftSide'>
       <div className='post' id='indivisual'>
-      <div className='title'>{postObj.title}</div>  
-      <div className='body'>{postObj.postText}</div>
-      <div className='footer'>{postObj.username}</div>  
+        {/* Title */}
+      <div className='title'
+      onClick={()=>{
+        if(authState.username === postObj.username ){
+        editPost('title')}}}>
+        {postObj.title}
+      </div>
+      {/* Content */}
+      <div className='body'
+      onClick={()=>{
+        if(authState.username === postObj.username ) {
+        editPost('body')}}}>
+        {postObj.postText}
+      </div>
+
+      <div className='footer'>{postObj.username}
+      {authState.username === postObj.username &&
+      <button 
+        onClick={()=>{deletePost(postObj.id)}} >
+        Delete A Post</button>}
+      </div>  
       </div>  
      </div>
      <div className='rightSide'>

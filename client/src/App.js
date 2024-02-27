@@ -9,6 +9,8 @@ import { AuthContext } from './helpers/authContext'
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import PageNotFound from './pages/PageNotFound';
+import Profile from './pages/Profile';
+import ChangePassword from './pages/ChangePassword';
 
 function App() {
 
@@ -44,18 +46,20 @@ return (
     <Router>
       <div className='navbar'>
         <div className='links'>
-        <Link to={'/'} >Go to Home Page</Link>
-      <Link to={'/createPost'} >Create a Post</Link>
       {
-        !authState.status &&  (
+        !authState.status ?  (
           <>
             <Link to={'/login'} >LOGIN</Link>
             <Link to={'/registration'} >Registration</Link>
           </>
-        ) } 
+        ) :
+        <>
+        <Link to={'/'}>Home Page</Link>
+        <Link to={'/createPost'}>Create A Post</Link>
+        </>} 
         </div>
         <div className='loggedInContainer'>
-            <h5>{authState?.username}</h5>
+            <h5>{authState.username}</h5>
             {authState.status && <button onClick={logout}> Logout</button>}
         </div>
       </div>
@@ -65,6 +69,8 @@ return (
         <Route exact path='/post/:id'  Component={Post} />
         <Route exact path='/login'  Component={Login} />
         <Route exact path='/registration'  Component={Registration} />
+        <Route exact path='/profile/:id'  Component={Profile} />
+        <Route exact path='/changePassword'  Component={ChangePassword} />
         <Route exact path='*'  Component={PageNotFound} />
       </Routes>
     </Router>

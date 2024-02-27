@@ -37,8 +37,43 @@ router.post("/login", async (req, res) => {
     });
   });
 
+  //Authentication Request
   router.get('/auth',validateToken, (req,res)=>{
    res.json(req.user)
   })
+
+  //Getting Profile INfo
+  //1.Basic Info
+  router.get('/basicInfo/:id',async (req,res)=>{
+    const id = req.params.id;
+    const basinInfo = await Users.findByPk(id,
+      {
+        attributes:{
+          exclude: ['password']
+        },
+      });
+      res.json(basinInfo);
+  })
+
+  //Changing Password Update INfo
+  router.put("/changepassword", validateToken, async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+    const user = await Users.findOne({
+        where: { username: req.user.username }
+    });
+
+    bcrypt.compare(oldPassword, user.password).then(async (match) => { 
+        if (!match) res.json({ error: "Wrong Password Combination" });
+
+        const hash = await bcrypt.hash(newPassword, 10); 
+        await Users.update(
+            { password: hash }, // New password hash
+            { where: { username: req.user.username } } // Add a where clause
+        ); 
+        res.json("SUCCESS"); 
+    }); 
+});  
+
+
 
 module.exports = router;
